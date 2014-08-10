@@ -11,9 +11,9 @@ Add your settings in config.py
 ## Launching
 For text file:
 ```
-  python import.py text
+  python export.py text
 ```
 For kindle:
 ```
-  python import.py kindle
+  python export.py kindle
 ```
