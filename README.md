@@ -1,4 +1,4 @@
-lingualeo_import
+lingualeo export
 ================
 
 ## Configuration
