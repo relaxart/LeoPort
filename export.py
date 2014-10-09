@@ -18,7 +18,8 @@ try:
     lingualeo.auth()
 
     for word in handler.get():
-        translate = lingualeo.getTranslates(word)
+        word = word.lower();
+	translate = lingualeo.getTranslates(word)
 
         lingualeo.addWord(translate["word"], translate["tword"])
 
