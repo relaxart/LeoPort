@@ -17,3 +17,8 @@ For kindle:
 ```
   python export.py kindle
 ```
+
+Сleaning Kindle dictionary:
+```
+python truncate.py
+```
