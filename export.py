@@ -1,13 +1,18 @@
-import word, config, service, sys
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import word
+import config
+import service
+import sys
 
 email = config.auth.get('email')
 password = config.auth.get('password')
 
 try:
-    type = sys.argv[1]
-    if type == 'text':
+    export_type = sys.argv[1]
+    if export_type == 'text':
         handler = word.Text(config.sources.get('text'))
-    elif type == 'kindle':
+    elif export_type == 'kindle':
         handler = word.Kindle(config.sources.get('kindle'))
     else:
         raise Exception('unsupported type')
@@ -18,19 +23,19 @@ try:
     lingualeo.auth()
 
     for word in handler.get():
-        word = word.lower();
-	translate = lingualeo.getTranslates(word)
+        word = word.lower()
+        translate = lingualeo.get_translates(word)
 
-        lingualeo.addWord(translate["word"], translate["tword"])
+        lingualeo.add_word(translate["word"], translate["tword"])
 
         if translate["is_exist"]:
             result = "Add word: "
         else:
-            result = "Alredy exist: "
+            result = "Already exists: "
 
         result = result + word
         print result
 
 
 except Exception as e:
-    print e
+    print e.args, e.message
