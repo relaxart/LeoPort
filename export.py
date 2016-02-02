@@ -29,9 +29,9 @@ try:
         lingualeo.add_word(translate["word"], translate["tword"])
 
         if translate["is_exist"]:
-            result = "Add word: "
-        else:
             result = "Already exists: "
+        else:
+            result = "Add word: "
 
         result = result + word
         print result
