@@ -4,12 +4,21 @@ import config
 import sqlite3
 
 kindle_config = config.sources.get('kindle')
+
 conn = sqlite3.connect(kindle_config)
-conn.execute("delete from WORDS;")
-conn.close()
+cursor = conn.cursor()
+cursor.execute("DELETE FROM WORDS;")
+conn.commit()
+cursor.close()
+
 conn = sqlite3.connect(kindle_config)
-conn = conn.execute("delete from LOOKUPS;")
-conn.close()
+cursor = conn.cursor()
+cursor.execute("DELETE FROM LOOKUPS;")
+conn.commit()
+cursor.close()
+
 conn = sqlite3.connect(kindle_config)
-conn.execute("update metadata set sscnt = 0 where id in ('WORDS', 'LOOKUPS');")
-conn.close()
+cursor = conn.cursor()
+cursor.execute("update metadata set sscnt = 0 where id in ('WORDS', 'LOOKUPS');")
+conn.commit()
+cursor.close()
