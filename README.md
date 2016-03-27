@@ -21,5 +21,5 @@ gradle.bat run
 
 ## Text example:
 apple  
-orange 
+orange  
 watermelon
