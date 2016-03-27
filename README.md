@@ -20,6 +20,6 @@ gradle.bat run
 - Text. All words should be in one column.
 
 ## Text example:
-apple
-orange
+apple  
+orange 
 watermelon
