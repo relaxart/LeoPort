@@ -1,24 +1,25 @@
-lingualeo export
-================
+LeoPort
+=======
+Allow add words from several formats to [Lingualeo.com](http://lingualeo.com/)
 
-## Configuration
-Create file config.py from config.py.dist
-```
-  cp ./config.py.dist config.py
-```
-Add your settings in config.py
+## Requirements
+Java 8
 
-## Launching
-For text file:
+## How to launch on Windows
 ```
-  python export.py text
-```
-For kindle:
-```
-  python export.py kindle
+gradle.bat run
 ```
 
-Сleaning Kindle dictionary:
+## How to launch on MacOs/Unix
 ```
-python truncate.py
+./gradle run
 ```
+
+## Formats
+- Kindle (sqlite) Default file located /Volumes/Kindle/system/vocabulary/vocab.db
+- Text. All words should be in one column.
+
+## Text example:
+apple
+orange
+watermelon
