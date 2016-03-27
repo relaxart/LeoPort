@@ -1,37 +1,13 @@
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'application'
+apply plugin: "java"
+apply plugin: "idea"
+version '0.1'
 
 repositories {
     mavenCentral()
 }
 
-version = '0.1-beta'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'Lingualeo',
-                'Implementation-Version': version,
-                'Main-Class': 'com.lingualeo.Application'
-    }
-}
-
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Lingualeo',
-                'Implementation-Version': version,
-                'Main-Class': 'com.lingualeo.Application'
-    }
-
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-}
-
 dependencies {
-    compile(
-            [group: 'org.json', name: 'json', version: '20151123'],
-            [group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.11.2']
-    )
-
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.6.2'
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.8.9.1'
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }

@@ -1,6 +1,8 @@
 package com.lingualeo.client;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import javax.naming.AuthenticationException;
 import java.io.BufferedReader;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ApiClient {
@@ -15,6 +18,7 @@ public class ApiClient {
     private final String login;
     private final String password;
     private boolean isAuthed = false;
+    private final Gson gson = new GsonBuilder().create();
 
     public ApiClient(String login, String password) {
         this.login = login;
@@ -22,32 +26,31 @@ public class ApiClient {
         CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
     }
 
-    public boolean auth() throws AuthenticationException, IOException {
+    public void auth() throws AuthenticationException, IOException {
         String urlParameters = "email=" + this.login + "&password=" + this.password;
         String requestUrl = API_URL + "api/login";
 
         HttpURLConnection conn = getHttpURLConnection(requestUrl, "POST", urlParameters);
-        JSONObject obj = new JSONObject(processResponse(conn));
-        String errorMsg = obj.getString("error_msg");
+        JsonObject gsonObject = gson.fromJson(processResponse(conn), JsonObject.class);
+        String errorMsg = gsonObject.get("error_msg").getAsString();
 
         if (errorMsg.length() > 0) {
             this.isAuthed = false;
             throw new AuthenticationException(errorMsg);
         } else {
             this.isAuthed = true;
-            return true;
         }
     }
 
-    public List<Translate> getTranslates(String word) throws AuthenticationException, IOException {
+    public List<Translations.Translate> getTranslates(String word) throws AuthenticationException, IOException {
         checkUserRights();
         String urlParameters = "word=" + word;
         String requestUrl = API_URL + "gettranslates";
 
         HttpURLConnection conn = getHttpURLConnection(requestUrl, "GET", urlParameters);
-        JSONObject obj = new JSONObject(processResponse(conn));
+        Translations translation = gson.fromJson(processResponse(conn), Translations.class);
 
-        return new Translation(obj).getTranslates();
+        return translation.translate;
     }
 
     public void addWord(String word, String translate, String context) throws AuthenticationException, IOException {
@@ -112,6 +115,20 @@ public class ApiClient {
     private void checkUserRights() throws AuthenticationException {
         if (!this.isAuthed) {
             throw new AuthenticationException("User doesn't have credentials.");
+        }
+    }
+
+    public class Translations {
+        public String error_msg;
+        public Integer is_user;
+        public List<Translate> translate = new ArrayList<>();
+        public String transcription;
+
+        public class Translate {
+            public Integer id;
+            public String value;
+            public Integer votes;
+            public Integer is_user;
         }
     }
 }

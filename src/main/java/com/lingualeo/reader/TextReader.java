@@ -1,14 +1,18 @@
-package com.lingualeo.handler;
+package com.lingualeo.reader;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
-public class TextHandler extends BaseHandler {
-    public TextHandler(File file) {
+class TextReader extends BaseReader {
+    TextReader(File file) {
         super(file);
     }
 
     @Override
-    public void read() {
+    public List<Word> read() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(this.file));
             String line;
@@ -19,5 +23,6 @@ public class TextHandler extends BaseHandler {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+        return getWords();
     }
 }

@@ -1,14 +1,14 @@
-package com.lingualeo.handler;
+package com.lingualeo.reader;
 
 public class Word {
     private String name;
     private String context;
 
-    public Word(String name) {
+    Word(String name) {
         this.name = name;
     }
 
-    public void setContext(String context) {
+    void setContext(String context) {
         this.context = context;
     }
 

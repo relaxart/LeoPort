@@ -1,20 +1,20 @@
-package com.lingualeo.handler;
+package com.lingualeo.reader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract public class BaseHandler {
-    protected File file;
-    protected List<Word> words = new ArrayList<>();
+abstract public class BaseReader {
+    File file;
+    List<Word> words = new ArrayList<>();
 
-    public List<Word> getWords() {
+    List<Word> getWords() {
         return words;
     }
 
-    abstract public void read();
+    abstract public List<Word> read();
 
-    public BaseHandler(File file) {
+    BaseReader(File file) {
         this.file = file;
     }
 

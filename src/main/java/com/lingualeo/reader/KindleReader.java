@@ -1,4 +1,4 @@
-package com.lingualeo.handler;
+package com.lingualeo.reader;
 
 import org.sqlite.SQLiteDataSource;
 import org.sqlite.SQLiteJDBCLoader;
@@ -7,15 +7,16 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 
-public class KindleHandler extends BaseHandler {
+class KindleReader extends BaseReader {
 
-    public KindleHandler(File file) {
+    KindleReader(File file) {
         super(file);
     }
 
     @Override
-    public void read() {
+    public List<Word> read() {
         try {
             SQLiteJDBCLoader.initialize();
             SQLiteDataSource dataSource = new SQLiteDataSource();
@@ -32,5 +33,6 @@ public class KindleHandler extends BaseHandler {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+        return getWords();
     }
 }
