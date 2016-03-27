@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<GridPane fx:controller="com.lingualeo.controller.FormController"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+    <padding>
+        <Insets top="5" right="25" bottom="10" left="25"/>
+    </padding>
+
+    <ImageView fitHeight="150" fitWidth="150" pickOnBounds="true" preserveRatio="true"
+               GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="5">
+        <image>
+            <Image url="@images/leo.png"/>
+        </image>
+    </ImageView>
+
+    <TextField fx:id="emailField" promptText="email@lingualeo.com"
+               GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+    <PasswordField fx:id="passwordField" promptText="password"
+                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+
+    <HBox GridPane.columnIndex="1" GridPane.rowIndex="2" alignment="TOP_CENTER">
+        <Button text="Choose file (.txt, .db)" onAction="#handleFileChooserAction"/>
+    </HBox>
+
+    <HBox GridPane.columnIndex="1" GridPane.rowIndex="3" alignment="TOP_CENTER">
+        <Button fx:id="startButton" text="Start" disable="true" onAction="#handleSubmitButtonAction"/>
+    </HBox>
+
+    <HBox GridPane.columnIndex="1" GridPane.rowIndex="4" alignment="TOP_CENTER">
+        <ProgressBar fx:id="progressBar" progress="0.0" visible="false">
+            <effect>
+                <ColorAdjust hue="-0.50"/>
+            </effect>
+        </ProgressBar>
+    </HBox>
+
+    <TextArea fx:id="textField" GridPane.columnIndex="0" editable="false" GridPane.rowIndex="5"
+              GridPane.columnSpan="2"/>
+</GridPane>

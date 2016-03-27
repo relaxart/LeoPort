@@ -1,2 +1,6 @@
-config.py
-*.pyc
+/build/
+/.gradle/
+/target/
+*.iml
+*.iws
+*.ipr
