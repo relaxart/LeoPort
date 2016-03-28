@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/relaxart/LeoPort.svg?branch=master)](https://travis-ci.org/relaxart/LeoPort)
+
 LeoPort
 =======
 Allow add words from several formats to [Lingualeo.com](http://lingualeo.com/)
