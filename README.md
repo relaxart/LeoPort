@@ -6,6 +6,7 @@ Allow add words from several formats to [Lingualeo.com](http://lingualeo.com/)
 
 ## Requirements
 Java 8
+[Oracle Java](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 ## How to launch on Windows
 ```
