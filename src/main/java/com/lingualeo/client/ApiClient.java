@@ -9,8 +9,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.*;
-import java.util.ArrayList;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 public class ApiClient {
@@ -42,13 +45,13 @@ public class ApiClient {
         }
     }
 
-    public List<Translations.Translate> getTranslates(String word) throws AuthenticationException, IOException {
+    public List<TranslateDto> getTranslates(String word) throws AuthenticationException, IOException {
         checkUserRights();
         String urlParameters = "word=" + word;
         String requestUrl = API_URL + "gettranslates";
 
         HttpURLConnection conn = getHttpURLConnection(requestUrl, "GET", urlParameters);
-        Translations translation = gson.fromJson(processResponse(conn), Translations.class);
+        TranslationsDto translation = gson.fromJson(processResponse(conn), TranslationsDto.class);
 
         return translation.translate;
     }
@@ -118,17 +121,4 @@ public class ApiClient {
         }
     }
 
-    public class Translations {
-        public String error_msg;
-        public Integer is_user;
-        public List<Translate> translate = new ArrayList<>();
-        public String transcription;
-
-        public class Translate {
-            public Integer id;
-            public String value;
-            public Integer votes;
-            public Integer is_user;
-        }
-    }
 }

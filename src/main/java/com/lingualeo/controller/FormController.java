@@ -1,6 +1,7 @@
 package com.lingualeo.controller;
 
 import com.lingualeo.Importer;
+import com.lingualeo.client.ApiClient;
 import com.lingualeo.reader.BaseReader;
 import com.lingualeo.reader.ReaderFactory;
 import com.lingualeo.reader.Word;
@@ -24,7 +25,7 @@ public class FormController {
         Thread t = new Thread(
                 () -> {
                     String password = passwordField.getText();
-                    Importer importer = new Importer(words, emailField.getText(), password, progressBar);
+                    Importer importer = new Importer(words, new ApiClient(emailField.getText(), password), progressBar);
                     startButton.setDisable(true);
                     importer.startImport();
                 }
