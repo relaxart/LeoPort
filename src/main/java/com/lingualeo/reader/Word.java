@@ -4,7 +4,7 @@ public class Word {
     private String name;
     private String context;
 
-    Word(String name) {
+    public Word(String name) {
         this.name = name;
     }
 
