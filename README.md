@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/relaxart/LeoPort.svg?branch=master)](https://travis-ci.org/relaxart/LeoPort)
+[![Coverage Status](https://coveralls.io/repos/github/relaxart/LeoPort/badge.svg?branch=test_prepare)](https://coveralls.io/github/relaxart/LeoPort?branch=master)
 
 LeoPort
 =======
