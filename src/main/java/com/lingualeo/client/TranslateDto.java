@@ -1,8 +1,11 @@
 package com.lingualeo.client;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TranslateDto {
     public Integer id;
     public String value;
     public Integer votes;
-    public Integer is_user;
+    @SerializedName("is_user")
+    public Integer isUser;
 }

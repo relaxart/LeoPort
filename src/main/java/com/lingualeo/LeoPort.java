@@ -8,10 +8,12 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class LeoPort extends Application {
+    private static final Logger logger = Logger.getLogger(LeoPort.class.getName());
 
     public static void main(String[] args) {
         launch(args);
@@ -31,12 +33,12 @@ public class LeoPort extends Application {
             stage.setScene(scene);
             stage.show();
 
-            OutputStream output = new TextAreaOutputStream(logArea, System.out);
-            PrintStream printOut = new PrintStream(output);
-            System.setOut(printOut);
-            System.setErr(printOut);
+            LogManager.getLogManager().reset();
+            Logger importLogger = Logger.getLogger(Importer.class.getName());
+            importLogger.setLevel(Level.ALL);
+            importLogger.addHandler(new LogHandler(logArea));
         } catch (IOException e) {
-            System.err.println(e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

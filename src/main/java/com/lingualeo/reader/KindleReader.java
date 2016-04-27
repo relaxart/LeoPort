@@ -8,8 +8,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class KindleReader extends BaseReader {
+    private static final Logger logger = Logger.getLogger(KindleReader.class.getName());
 
     KindleReader(File file) {
         super(file);
@@ -24,14 +27,19 @@ class KindleReader extends BaseReader {
 
             Connection c = dataSource.getConnection();
             Statement stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery("select word, usage from words LEFT JOIN LOOKUPS ON words.id = LOOKUPS.word_key where words.lang=\"en\" GROUP BY word ORDER BY word;");
+            ResultSet rs = stmt.executeQuery("select word, usage from words " +
+                    "LEFT JOIN LOOKUPS ON words.id = LOOKUPS.word_key " +
+                    "WHERE words.lang=\"en\" GROUP BY word ORDER BY word;");
             while (rs.next()) {
                 Word w = new Word(rs.getString("word").toLowerCase());
                 w.setContext(rs.getString("usage"));
                 this.words.add(w);
             }
+            rs.close();
+            stmt.close();
+            c.close();
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
         return getWords();
     }

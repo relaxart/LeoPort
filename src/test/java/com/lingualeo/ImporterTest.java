@@ -23,7 +23,7 @@ public class ImporterTest extends Assert {
         List<TranslateDto> translates = new ArrayList<>();
         TranslateDto translate = new TranslateDto();
         translate.value = "тест";
-        translate.is_user = 0;
+        translate.isUser = 0;
         translates.add(translate);
 
         when(clientMock.getTranslates("test")).thenReturn(translates);
