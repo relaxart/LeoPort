@@ -15,13 +15,16 @@ import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ApiClient {
-    private final static String API_URL = "http://api.lingualeo.com/";
+    private static final String API_URL = "http://api.lingualeo.com/";
     private final String login;
     private final String password;
     private boolean isAuthed = false;
     private final Gson gson = new GsonBuilder().create();
+    private static final Logger logger = Logger.getLogger(ApiClient.class.getName());
 
     public ApiClient(String login, String password) {
         this.login = login;
@@ -29,13 +32,19 @@ public class ApiClient {
         CookieHandler.setDefault(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
     }
 
-    public void auth() throws AuthenticationException, IOException {
+    public void auth() throws AuthenticationException {
         String urlParameters = "email=" + this.login + "&password=" + this.password;
         String requestUrl = API_URL + "api/login";
+        String errorMsg;
 
-        HttpURLConnection conn = getHttpURLConnection(requestUrl, "POST", urlParameters);
-        JsonObject gsonObject = gson.fromJson(processResponse(conn), JsonObject.class);
-        String errorMsg = gsonObject.get("error_msg").getAsString();
+        try {
+            HttpURLConnection conn = getHttpURLConnection(requestUrl, "POST", urlParameters);
+            JsonObject gsonObject = gson.fromJson(processResponse(conn), JsonObject.class);
+            errorMsg = gsonObject.get("error_msg").getAsString();
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+            throw new AuthenticationException(e.getMessage());
+        }
 
         if (errorMsg.length() > 0) {
             this.isAuthed = false;
@@ -45,24 +54,33 @@ public class ApiClient {
         }
     }
 
-    public List<TranslateDto> getTranslates(String word) throws AuthenticationException, IOException {
+    public List<TranslateDto> getTranslates(String word) throws AuthenticationException {
         checkUserRights();
         String urlParameters = "word=" + word;
         String requestUrl = API_URL + "gettranslates";
 
-        HttpURLConnection conn = getHttpURLConnection(requestUrl, "GET", urlParameters);
-        TranslationsDto translation = gson.fromJson(processResponse(conn), TranslationsDto.class);
-
+        TranslationsDto translation;
+        try {
+            HttpURLConnection conn = getHttpURLConnection(requestUrl, "GET", urlParameters);
+            translation = gson.fromJson(processResponse(conn), TranslationsDto.class);
+        } catch (IOException e) {
+            translation = new TranslationsDto();
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
         return translation.translate;
     }
 
-    public void addWord(String word, String translate, String context) throws AuthenticationException, IOException {
+    public void addWord(String word, String translate, String context) throws AuthenticationException {
         checkUserRights();
         String urlParameters = "word=" + word + "&tword=" + translate + "&context=" + context;
         String requestUrl = API_URL + "addword";
 
-        HttpURLConnection conn = getHttpURLConnection(requestUrl, "POST", urlParameters);
-        processResponse(conn);
+        try {
+            HttpURLConnection conn = getHttpURLConnection(requestUrl, "POST", urlParameters);
+            processResponse(conn);
+        } catch (Exception e) {
+            logger.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 
     private HttpURLConnection getHttpURLConnection(String requestUrl, String method, String urlParameters) throws IOException {
@@ -72,19 +90,13 @@ public class ApiClient {
         conn.setDoOutput(true);
         conn.setInstanceFollowRedirects(false);
         conn.setRequestProperty("charset", "utf-8");
+        conn.setUseCaches(false);
 
-        switch (method) {
-            case "POST":
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-                break;
-            case "GET":
-                conn.setRequestMethod("GET");
-                break;
+        if ("POST".equals(method)) {
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
         }
 
-        conn.setUseCaches(false);
         if (urlParameters != null) {
             conn.getOutputStream().write(urlParameters.getBytes());
         }
@@ -114,11 +126,9 @@ public class ApiClient {
         return responseBody;
     }
 
-
     private void checkUserRights() throws AuthenticationException {
         if (!this.isAuthed) {
             throw new AuthenticationException("User doesn't have credentials.");
         }
     }
-
 }

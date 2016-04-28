@@ -9,10 +9,13 @@ import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Importer {
     private final List<Word> words;
     private final ApiClient client;
+    private static final Logger logger = Logger.getLogger(Importer.class.getName());
     private ProgressBar progressBar;
 
     public Importer(List<Word> words, ApiClient client, ProgressBar progressBar) {
@@ -29,18 +32,17 @@ public class Importer {
 
     public void startImport() {
         if (words.isEmpty()) {
-            System.out.println("You don't have words in the file");
+            logger.warning("You don't have words in the file");
             return;
         }
-        System.out.println("Start import to Lingualeo...");
+        logger.finest("Start import to Lingualeo...");
 
         try {
             client.auth();
-        } catch (AuthenticationException | IOException e) {
-            System.err.println(e.getMessage());
+        } catch (AuthenticationException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
-
 
         updateProgress(0);
         float count = words.size();
@@ -49,26 +51,30 @@ public class Importer {
         for (Word word : words) {
             try {
                 Iterator<TranslateDto> it = client.getTranslates(word.getName()).iterator();
-                if(it.hasNext()) {
-                    TranslateDto tr = it.next();
-                    if (tr.is_user == 1) {
-                        System.out.println("Word exists: " + word.getName());
-                    } else {
-                        client.addWord(word.getName(), tr.value, word.getContext());
-                        System.out.println("Word added: " + word.getName());
-                    }
-                }
+                processWord(word, it);
 
                 float percent = i / count;
                 updateProgress(percent);
 
                 i++;
             } catch (AuthenticationException | IOException e) {
-                System.err.println(e.getMessage());
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
         updateProgress(1);
-        System.out.println("End import to Lingualeo...");
+        logger.finest("End import to Lingualeo...");
+    }
+
+    private void processWord(Word word, Iterator<TranslateDto> it) throws AuthenticationException, IOException {
+        if(it.hasNext()) {
+            TranslateDto tr = it.next();
+            if (tr.isUser == 1) {
+                logger.finest("Word exists: " + word.getName());
+            } else {
+                client.addWord(word.getName(), tr.value, word.getContext());
+                logger.finest("Word added: " + word.getName());
+            }
+        }
     }
 
     private void updateProgress(double progress) {
