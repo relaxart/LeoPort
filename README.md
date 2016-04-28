@@ -11,7 +11,7 @@ Java 8
 
 ## How to launch on Windows
 ```
-gradle.bat run
+gradlew.bat run
 ```
 
 ## How to launch on MacOs/Unix
