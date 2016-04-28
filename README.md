@@ -16,7 +16,7 @@ gradle.bat run
 
 ## How to launch on MacOs/Unix
 ```
-./gradle run
+./gradlew run
 ```
 
 ## Formats
