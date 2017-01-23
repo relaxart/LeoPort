@@ -122,7 +122,10 @@ public class ApiClient {
             responseBody = responseBody + line;
         }
 
+        System.out.println(responseBody);
+
         assert responseBody != null;
+
         return responseBody;
     }
 
