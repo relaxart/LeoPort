@@ -36,14 +36,14 @@ public class Importer {
             return;
         }
         logger.finest("Start import to Lingualeo...");
-
+        logger.finest("Authentication to Lingualeo...");
         try {
             client.auth();
         } catch (AuthenticationException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
-
+        
         updateProgress(0);
         float count = words.size();
         float i = 0;
@@ -68,7 +68,7 @@ public class Importer {
     private void processWord(Word word, Iterator<TranslateDto> it) throws AuthenticationException, IOException {
         if(it.hasNext()) {
             TranslateDto tr = it.next();
-            if (tr.isUser == 1) {
+            if (tr.isUser != null && tr.isUser == 1) {
                 logger.finest("Word exists: " + word.getName());
             } else {
                 client.addWord(word.getName(), tr.value, word.getContext());
