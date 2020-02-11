@@ -2,6 +2,7 @@ package com.lingualeo.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import javax.naming.AuthenticationException;
@@ -19,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ApiClient {
-    private static final String API_URL = "http://api.lingualeo.com/";
+    private static final String API_URL = "https://api.lingualeo.com/";
     private final String login;
     private final String password;
     private boolean isAuthed = false;
@@ -34,23 +35,23 @@ public class ApiClient {
 
     public void auth() throws AuthenticationException {
         String urlParameters = "email=" + this.login + "&password=" + this.password;
-        String requestUrl = API_URL + "api/login";
-        String errorMsg;
+        String requestUrl = API_URL + "login";
+        JsonElement errorMsg;
 
         try {
             HttpURLConnection conn = getHttpURLConnection(requestUrl, "POST", urlParameters);
-            JsonObject gsonObject = gson.fromJson(processResponse(conn), JsonObject.class);
-            errorMsg = gsonObject.get("error_msg").getAsString();
+            String response = processResponse(conn);
+            JsonObject gsonObject = gson.fromJson(response, JsonObject.class);
+            errorMsg = gsonObject.get("error_msg");
         } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage(), e);
             throw new AuthenticationException(e.getMessage());
         }
 
-        if (errorMsg.length() > 0) {
+        this.isAuthed = true;
+        if (errorMsg != null) {
             this.isAuthed = false;
-            throw new AuthenticationException(errorMsg);
-        } else {
-            this.isAuthed = true;
+            throw new AuthenticationException(errorMsg.getAsString());
         }
     }
 
@@ -58,7 +59,6 @@ public class ApiClient {
         checkUserRights();
         String urlParameters = "word=" + word;
         String requestUrl = API_URL + "gettranslates";
-
         TranslationsDto translation;
         try {
             HttpURLConnection conn = getHttpURLConnection(requestUrl, "GET", urlParameters);
