@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import javax.naming.AuthenticationException;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +74,8 @@ public class ApiClient {
 
     public void addWord(String word, String translate, String context) throws AuthenticationException {
         checkUserRights();
-        String urlParameters = "word=" + word + "&tword=" + translate + "&context=" + context;
+        logger.fine(translate);
+        String urlParameters = "word=" + word + "&tword=" + URLEncoder.encode(translate, StandardCharsets.UTF_8) + "&context=" + context;
         String requestUrl = API_URL + "addword";
 
         try {
@@ -114,16 +117,15 @@ public class ApiClient {
     }
 
     private String processResponse(HttpURLConnection conn) throws IOException {
-        Reader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        Reader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
         BufferedReader br = new BufferedReader(reader);
         String line;
-        String responseBody = br.readLine();
+        StringBuilder responseBody = new StringBuilder(br.readLine());
         while ((line = br.readLine()) != null) {
-            responseBody = responseBody + line;
+            responseBody.append(line);
         }
 
-        assert responseBody != null;
-        return responseBody;
+        return responseBody.toString();
     }
 
     private void checkUserRights() throws AuthenticationException {
