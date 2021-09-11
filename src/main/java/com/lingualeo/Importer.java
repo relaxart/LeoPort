@@ -7,6 +7,7 @@ import javafx.scene.control.ProgressBar;
 
 import javax.naming.AuthenticationException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
 public class Importer {
     private final List<Word> words;
     private final ApiClient client;
+    private HashMap<String, String> translations;
     private static final Logger logger = Logger.getLogger(Importer.class.getName());
     private ProgressBar progressBar;
 
@@ -28,6 +30,10 @@ public class Importer {
     public Importer(List<Word> words, ApiClient client) {
         this.words = words;
         this.client = client;
+    }
+
+    public void setTranslations(HashMap<String, String> translations) {
+        this.translations = translations;
     }
 
     public void startImport() {
@@ -50,8 +56,16 @@ public class Importer {
 
         for (Word word : words) {
             try {
-                Iterator<TranslateDto> it = client.getTranslates(word.getName()).iterator();
-                processWord(word, it);
+                if (translations == null
+                        || translations.isEmpty()
+                        || !translations.containsKey(word.getName())) {
+
+                    Iterator<TranslateDto> it = client.getTranslates(word.getName()).iterator();
+                    processWord(word, it);
+                } else {
+                    client.addWord(word.getName(), translations.get(word.getName()), word.getContext());
+                    logger.finest("Word added: " + word.getName());
+                }
 
                 float percent = i / count;
                 updateProgress(percent);
@@ -61,6 +75,7 @@ public class Importer {
                 logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
+
         updateProgress(1);
         logger.finest("End import to Lingualeo...");
     }
