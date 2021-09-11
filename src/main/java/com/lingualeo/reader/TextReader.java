@@ -22,8 +22,14 @@ class TextReader extends BaseReader {
             BufferedReader br = new BufferedReader(fileReader);
             String line;
             while ((line = br.readLine()) != null) {
-                line = line.trim();
-                this.words.add(new Word(line.toLowerCase()));
+                String[] split_str = line.split(";", 2);
+                if (split_str.length == 1) {
+                    line = line.trim();
+                    this.words.add(new Word(line.toLowerCase()));
+                } else {
+                    this.words.add(new Word(split_str[0].trim()));
+                    this.translations.put(split_str[0].trim(), split_str[1].trim());
+                }
             }
             fileReader.close();
         } catch (IOException e) {

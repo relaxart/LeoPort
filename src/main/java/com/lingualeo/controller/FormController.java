@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 
 public class FormController {
@@ -18,7 +19,9 @@ public class FormController {
     public Button startButton;
     public TextArea textField;
     public ProgressBar progressBar;
+    public CheckBox translationsCheckBox;
     private List<Word> words;
+    private HashMap<String, String> translations;
 
     @FXML
     protected void handleSubmitButtonAction() {
@@ -26,6 +29,7 @@ public class FormController {
                 () -> {
                     String password = passwordField.getText();
                     Importer importer = new Importer(words, new ApiClient(emailField.getText(), password), progressBar);
+                    importer.setTranslations(translations);
                     startButton.setDisable(true);
                     importer.startImport();
                 }
@@ -44,6 +48,7 @@ public class FormController {
         if (file != null) {
             BaseReader reader = ReaderFactory.create(file);
             words = reader.read();
+            translations = reader.getTranslations();
             this.startButton.setDisable(false);
         }
     }
